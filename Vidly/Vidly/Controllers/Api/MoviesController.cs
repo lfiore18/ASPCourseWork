@@ -22,9 +22,14 @@ namespace Vidly.Controllers.Api
 
         // GET /api/movies
 
-        public IEnumerable<MovieDto> GetMovies()
+        public IHttpActionResult GetMovies()
         {
-            return _context.Movies.ToList().Select(Mapper.Map<Movie, MovieDto>);
+            var movieDtos = _context.Movies
+                .Include(m => m.Genre)
+                .ToList()
+                .Select(Mapper.Map<Movie, MovieDto>);
+
+            return Ok(movieDtos);
         }
 
         // GET /api/movies/1
@@ -79,6 +84,7 @@ namespace Vidly.Controllers.Api
             _context.SaveChanges();
         }
 
+        // DELETE /api/movies/1
         [HttpDelete]
         public void DeleteMovie(int id)
         {
@@ -86,12 +92,12 @@ namespace Vidly.Controllers.Api
                 throw new HttpResponseException(HttpStatusCode.BadRequest);
 
 
-            var movieInDb = _context.Customers.SingleOrDefault(c => c.Id == id);
+            var movieInDb = _context.Movies.SingleOrDefault(m => m.Id == id);
 
             if (movieInDb == null)
                 throw new HttpResponseException(HttpStatusCode.NotFound);
 
-            _context.Customers.Remove(movieInDb);
+            _context.Movies.Remove(movieInDb);
             _context.SaveChanges();
         }
     }

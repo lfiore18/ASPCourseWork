@@ -8,30 +8,22 @@
 
 <h2>Customers</h2>
 
-@if (!Model.Any())
-{
-    <p> We don't have any customers yet!</p>
-} 
-else 
-{
+<table id="customers" class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Customer</th>
+            <th>Membership Type</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
 
-        <table id="customers" class="table table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th>Customer Name</th>
-                    <th>Membership Type</th>
-                    <th>Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-}
 @section scripts
 {
     <script>
         $(document).ready(function () {
-            $("#customers").DataTable({
+            var table = $("#customers").DataTable({
                 ajax: {
                     url: "api/customers",
                     dataSrc: ""
@@ -39,12 +31,12 @@ else
                 columns: [
                     {
                         data: "name",
-                        render: function(data, type, row, customer) {
-                            return "<a href='/customers/edit/" + customer.id + "'>" +customer.name + "</a>"
+                        render: function (data, type, customer) {
+                            return "<a href='/customers/edit/" + customer.id + "'>" + customer.name + "</a>"
                         }
                     },
                     {
-                        data: "name"
+                        data: "membershipType.name"
                     },
                     {
                         data: "id",
@@ -65,12 +57,12 @@ else
                             url: "/api/customers/" + button.attr("data-customer-id"),
                             method: "DELETE",
                             success: function () {
-                                button.parents("tr").remove();
+                                table.row(button.parents("tr")).remove().draw();
                             }
                         });
                     }
                 });
             });
         });
-    </script>    
+    </script>
 }

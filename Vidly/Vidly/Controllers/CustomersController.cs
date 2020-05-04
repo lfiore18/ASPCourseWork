@@ -87,15 +87,12 @@ namespace Vidly.Controllers
 
         public ViewResult Index()
         {
-            var customers = _context.Customers.Include(c => c.MembershipType).ToList();
-
-            return View(customers);
+            return View();
         }
 
 /*      [Route("Customers/Details/{requestedId}")]*/
         public ActionResult Details(int id)
         {
-
             var Customer = _context.Customers.Include(c => c.MembershipType).SingleOrDefault(cust => cust.Id == id);
 
             if (Customer == null)
